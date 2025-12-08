@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>業界別ニーズダッシュボード</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: 'Helvetica Neue', sans-serif;
+      color: #333;
+      padding: 2rem;
+    }
+    .accent { color: #F58220; }
+    .block-bg {
+      background-color: #E9F7E9;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .heatmap td {
+      text-align: center;
+      font-weight: bold;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="text-center mb-4">
+    <h2 class="accent fw-bold">業界別ニーズダッシュボード</h2>
+  </div>
+
+  <!-- 棒グラフ -->
+  <div class="block-bg mb-4">
+    <h5 class="accent">業界別ニーズ（体験内容別）</h5>
+    <canvas id="barChart"></canvas>
+  </div>
+
+  <!-- ヒートマップ -->
+  <div class="block-bg mb-4">
+    <h5 class="accent">時期別ニーズ（業界×季節）</h5>
+    <table class="table table-bordered heatmap" id="heatmapTable">
+      <thead>
+        <tr>
+          <th>業界</th>
+          <th>春</th>
+          <th>夏</th>
+          <th>秋</th>
+          <th>冬</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>IT・DX</th>
+          <td data-value="5">5</td>
+          <td data-value="10">10</td>
+          <td data-value="8">8</td>
+          <td data-value="2">2</td>
+        </tr>
+        <tr>
+          <th>食品・農業</th>
+          <td data-value="3">3</td>
+          <td data-value="6">6</td>
+          <td data-value="4">4</td>
+          <td data-value="1">1</td>
+        </tr>
+        <tr>
+          <th>製造・ものづくり</th>
+          <td data-value="7">7</td>
+          <td data-value="12">12</td>
+          <td data-value="9">9</td>
+          <td data-value="3">3</td>
+        </tr>
+        <tr>
+          <th>医療・福祉</th>
+          <td data-value="2">2</td>
+          <td data-value="5">5</td>
+          <td data-value="3">3</td>
+          <td data-value="1">1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 一覧表 -->
+  <div class="block-bg mb-4">
+    <h5 class="accent">詳細一覧</h5>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>業界</th>
+          <th>人数</th>
+          <th>希望体験内容</th>
+          <th>希望時期</th>
+          <th>学校名・クラス</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>IT・DX</td>
+          <td>10</td>
+          <td>インターンシップ</td>
+          <td>夏</td>
+          <td>○○高校 2年3組</td>
+        </tr>
+        <tr>
+          <td>食品・農業</td>
+          <td>5</td>
+          <td>職場見学</td>
+          <td>春</td>
+          <td>△△高校 1年2組</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // 棒グラフ
+    const ctx = document.getElementById('barChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['IT・DX', '食品・農業', '製造・ものづくり', '医療・福祉'],
+        datasets: [
+          { label: '職場見学', data: [10, 5, 8, 4], backgroundColor: '#66c2a5' },
+          { label: 'キャリア講話', data: [5, 3, 6, 2], backgroundColor: '#fc8d62' },
+          { label: '探究学習サポート', data: [8, 4, 7, 3], backgroundColor: '#8da0cb' },
+          { label: 'インターンシップ', data: [12, 6, 10, 5], backgroundColor: '#e78ac3' }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' }
+        }
+      }
+    });
+
+    // ヒートマップ（人数に応じてオレンジ濃淡）
+    const cells = document.querySelectorAll('#heatmapTable td[data-value]');
+    let maxValue = 0;
+    cells.forEach(cell => {
+      const val = parseInt(cell.dataset.value);
+      if (val > maxValue) maxValue = val;
+    });
+
+    cells.forEach(cell => {
+      const val = parseInt(cell.dataset.value);
+      const intensity = val / maxValue; // 0〜1の比率
+      const lightness = 90 - (intensity * 50); // 人数が多いほど暗くなる
+      cell.style.backgroundColor = `hsl(30, 100%, ${lightness}%)`; // オレンジ濃淡
+    });
+  </script>
+
+</body>
+</html>
